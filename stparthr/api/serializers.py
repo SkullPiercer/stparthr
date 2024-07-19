@@ -16,28 +16,46 @@ class StreetSerializer(serializers.ModelSerializer):
 
 
 class ShopSerializer(serializers.ModelSerializer):
-    city_name = serializers.CharField(source='city.name', read_only=True)
-    street_name = serializers.CharField(source='street.name', read_only=True)
-    city_id = serializers.PrimaryKeyRelatedField(
-        queryset=City.objects.all(), write_only=True
-    )
-    street_id = serializers.PrimaryKeyRelatedField(
-        queryset=Street.objects.all(), write_only=True
-    )
+    city = serializers.CharField(source='city.name', read_only=True)
+    street = serializers.CharField(source='street.name', read_only=True)
+    city_name = serializers.CharField(write_only=True)
+    street_name = serializers.CharField(write_only=True)
 
     class Meta:
         model = Shop
-        fields = ['name', 'city_id', 'city_name', 'street_id', 'street_name',
-                  'house_number', 'opening_time', 'closing_time']
+        fields = [
+            'name', 'city', 'street', 'house_number', 'opening_time',
+            'closing_time', 'city_name', 'street_name'
+        ]
 
     def validate(self, data):
         shop_name = data.get('name')
+        city = data.get('city_name')
+        street = data.get('street_name')
+
+        if not Street.objects.filter(name=street).exists():
+            raise serializers.ValidationError(
+                'Street does`t exists'
+            )
+
+        if not City.objects.filter(name=city).exists():
+            raise serializers.ValidationError(
+                'City does`t exists'
+            )
+
         if Shop.objects.filter(name=shop_name).exists():
-            raise serializers.ValidationError('This shop name is already in use!')
+            raise serializers.ValidationError(
+                'This shop name is already in use!'
+            )
         return data
 
     def create(self, validated_data):
-        city = validated_data.pop('city_id')
-        street = validated_data.pop('street_id')
+        city_name = validated_data.pop('city_name')
+        street_name = validated_data.pop('street_name')
+
+        city, created = City.objects.get_or_create(name=city_name)
+        street, created = Street.objects.get_or_create(name=street_name,
+                                                       city=city)
+
         shop = Shop.objects.create(city=city, street=street, **validated_data)
         return shop
