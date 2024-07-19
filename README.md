@@ -58,6 +58,11 @@ Technical specifications for Junior Python developer from Guider.pro. Service th
 ```python
   pip install -r requirements.txt
 ```
+### **Установить секретный ключ:**
+#### В директории с файлом settings.py необходимо создать файл .env и поместить в него 
+```python
+SECRET_KEY=django-insecure-+c2u4te3548!43hznu*((_5na7jshq))ts2joyo$5ta@4f3(tn
+```
 ### **Выполнить миграции:**
 #### Windows:
 ```python
@@ -76,11 +81,6 @@ Technical specifications for Junior Python developer from Guider.pro. Service th
 #### Linux/Mac
 ```python
   python3 manage.py loaddata fixtures.json
-```
-### **Установить секретный ключ:**
-#### В директории с файлом settings.py необходимо создать файл .env и поместить в него 
-```python
-SECRET_KEY=django-insecure-+c2u4te3548!43hznu*((_5na7jshq))ts2joyo$5ta@4f3(tn
 ```
 ### **Запустить проект:**
 #### Windows:
