@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from core.models import City, Street, Shop
 
@@ -19,8 +18,12 @@ class StreetSerializer(serializers.ModelSerializer):
 class ShopSerializer(serializers.ModelSerializer):
     city_name = serializers.CharField(source='city.name', read_only=True)
     street_name = serializers.CharField(source='street.name', read_only=True)
-    city_id = serializers.PrimaryKeyRelatedField(queryset=City.objects.all(), write_only=True)
-    street_id = serializers.PrimaryKeyRelatedField(queryset=Street.objects.all(), write_only=True)
+    city_id = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all(), write_only=True
+    )
+    street_id = serializers.PrimaryKeyRelatedField(
+        queryset=Street.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Shop
