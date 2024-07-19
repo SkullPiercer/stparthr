@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from rest_framework import generics, status, viewsets
 
@@ -22,19 +23,13 @@ class StreetViewSet(viewsets.ReadOnlyModelViewSet):
 class ShopListCreateView(generics.ListCreateAPIView):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('street', 'city')
 
     def get_queryset(self):
-        street_id = self.request.query_params.get('street')
-        city_id = self.request.query_params.get('city')
         open_status = self.request.query_params.get('open')
-
         current_time = timezone.now().time()
-
         filters = Q()
-        if street_id:
-            filters &= Q(street_id=street_id)
-        if city_id:
-            filters &= Q(city_id=city_id)
         if open_status is not None:
             if open_status == '1':
                 filters &= (

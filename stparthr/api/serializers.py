@@ -17,28 +17,24 @@ class StreetSerializer(serializers.ModelSerializer):
 
 
 class ShopSerializer(serializers.ModelSerializer):
-    city_name = serializers.CharField(write_only=True)
-    street_name = serializers.CharField(write_only=True)
-    city = serializers.PrimaryKeyRelatedField(read_only=True)
-    street = serializers.PrimaryKeyRelatedField(read_only=True)
+    city_name = serializers.CharField(source='city.name', read_only=True)
+    street_name = serializers.CharField(source='street.name', read_only=True)
+    city_id = serializers.PrimaryKeyRelatedField(queryset=City.objects.all(), write_only=True)
+    street_id = serializers.PrimaryKeyRelatedField(queryset=Street.objects.all(), write_only=True)
 
     class Meta:
         model = Shop
-        fields = ['name', 'city', 'city_name', 'street', 'street_name',
+        fields = ['name', 'city_id', 'city_name', 'street_id', 'street_name',
                   'house_number', 'opening_time', 'closing_time']
 
     def validate(self, data):
         shop_name = data.get('name')
         if Shop.objects.filter(name=shop_name).exists():
-            raise ValidationError('This shopname already in use!')
+            raise serializers.ValidationError('This shop name is already in use!')
         return data
 
     def create(self, validated_data):
-        city_name = validated_data.pop('city_name')
-        street_name = validated_data.pop('street_name')
-        city, created = City.objects.get_or_create(name=city_name)
-        street, created = Street.objects.get_or_create(
-            name=street_name, city=city
-        )
+        city = validated_data.pop('city_id')
+        street = validated_data.pop('street_id')
         shop = Shop.objects.create(city=city, street=street, **validated_data)
         return shop

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'core.apps.CoreConfig',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
