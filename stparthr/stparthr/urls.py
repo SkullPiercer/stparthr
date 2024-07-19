@@ -14,10 +14,10 @@ urlpatterns = [
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Cats API",
+      title="Docs API",
       default_version='v1',
       description="API documentation",
-      contact=openapi.Contact(email="admin@kittygram.ru"),
+      contact=openapi.Contact(email="https://t.me/Sashcat"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
